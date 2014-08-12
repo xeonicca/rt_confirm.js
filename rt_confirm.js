@@ -23,8 +23,7 @@
     title: "",
     confirmButton: "Yes",
     cancelButton: "Cancel",
-    buttonClass: "rt-button",
-    display: false
+    buttonClass: "rt-button"
   };
 
   function Plugin( element, options ){
@@ -34,58 +33,74 @@
     this._defaults = defaults;
     this._name = pluginName;
     this.uid = prefix + uid;
-    return this.init();
+    this.display = true;
+    this.init();
+    return this.$el;
   };
 
   Plugin.prototype.init = function(){
-    var 
-    template =   '<div class=\"rt-modal\" uid=\"' + this.uid + '\">';
-    template +=  '  <div class=\"modal-container\">';
-    if( this.options.title !== '' ){
-      template +=  '    <span class=\"modal-title\">' + this.options.title + '<\/span>';
+    var _self = this,
+    template =   '<div class=\"rt-modal\" uid=\"' + _self.uid + '\">';
+    template +=  '  <div class=\"rt-modal-container\">';
+    if( _self.options.title !== '' ){
+      template +=  '    <span class=\"rt-modal-title\">' + _self.options.title + '<\/span>';
     }
-    template +=  '    <div class=\"modal-content\">';
-    template +=  '      <p class=\"modal-text\">' + this.options.text + '<\/p>';
-    template +=  '      <div class=\"modal-button-container\">';
-    template +=  '        <button data=\"confirm\" class=\"' + this.options.buttonClass + '\">' + this.options.confirmButton + '<\/button>';
-    template +=  '        <button data=\"cancel\"  class=\"' + this.options.buttonClass + '\">' + this.options.cancelButton + '<\/button>';
+    template +=  '    <div class=\"rt-modal-content\">';
+    template +=  '      <p class=\"rt-modal-text\">' + _self.options.text + '<\/p>';
+    template +=  '      <div class=\"rt-modal-button-container\">';
+    template +=  '        <button data=\"confirm\" class=\"' + _self.options.buttonClass + '\">' + _self.options.confirmButton + '<\/button>';
+    template +=  '        <button data=\"cancel\"  class=\"' + _self.options.buttonClass + '\">' + _self.options.cancelButton + '<\/button>';
     template +=  '      <\/div>';
     template +=  '    <\/div>';
     template +=  '  <\/div>';
     template +=  '<\/div>';
-    this.$template = $( template );
-    this.bind();
-    return this.render( this.options.display );
+    _self.$template = $( template );
+    _self.$el.bind( 'click', function(){
+      _self.toggleConfirm();
+    });
   };
 
-  Plugin.prototype.bind = function(){
+
+  Plugin.prototype.toggleConfirm = function(){
     var _self = this;
-    _self.$el.bind( 'click', _self.render( _self.display ) );
-
-    _self.$template.bind( 'rt-confirm-show', function(){
+    if( _self.display ){
+      _self.$template.on( 'click', 'button[data]', function(){
+        if( $(this).attr('data') ==='confirm'){
+          _self.accept = true;
+        }
+        if( $(this).attr('data') ==='cancel'){
+          _self.accept = false;
+        }
+        _self.toggleConfirm();
+      });
       $('body').append( _self.$template.show() );
-    });
-
-    _self.$template.bind( 'rt-confirm-hide', function(){
+    }else{
       _self.$template.remove();
-    });
-  };
+      _self.onClose();
+    }
+    _self.display = !_self.display;
+  }
 
-  Plugin.prototype.render = function( toggle ){
-    this.display = !toggle;
-    toggle? this.$template.trigger('rt-confirm-show') : this.$template.trigger( 'rt-confirm-hide' );
-    return this;
+  // Plugin.prototype.render = function(){
+  //   this.display? this.$template.trigger('rt-confirm-show') : this.$template.trigger( 'rt-confirm-hide' );
+  //   this.display = !this.display;
+  //   return this;
+  // };
+
+  Plugin.prototype.onClose = function(){
+    if( typeof this.options.close === 'function' ){
+      this.options.close.call( this.$el, this.accept );
+    }
   };
 
   $.fn.rtConfirm = function( options ){
     return this.each( function(){
       if( typeof $(this).attr('uid') !== 'undefined' ){
-        return $.data( document.body, $(this).attr('uid') ).bind().$el;
+        $.data( document.body, $(this).attr('uid') );
       }else{
         uid += 1;
         var newConfirm = new Plugin( this, options );
         $.data( document.body, newConfirm.uid , newConfirm );
-        return newConfirm.$el;
       }
     });
   };
