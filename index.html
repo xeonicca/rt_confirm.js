@@ -46,6 +46,10 @@
       text-align: center;
       padding-bottom: 1em;
     }
+
+    .container {
+      max-width: 900px;
+    }
   </style>
 </head>
 <body>
@@ -55,40 +59,41 @@
   </div>
 
   <div class="jumbotron">
-    <h1>A Refined Custom Confirm Dialog</h1>
+    <h1>A Refined Confirm Dialog</h1>
     <p class="lead">Supports custom text, title, and button class</p>
     <p><a id="demo_btn" class="btn btn-lg btn-success" href="#" role="button">Click me!</a></p>
   </div>
 
-  <div class="row marketing">
+  <h2>Available options</h2>
+  <div class="row">
     <div class="col-lg-6">
-      <h4>Subheading</h4>
-      <p>Donec id elit non mi porta gravida at eget metus. Maecenas faucibus mollis interdum.</p>
+      <h4>title</h4>
+      <p>The title to be displayed on top of the modal.</p>
 
-      <h4>Subheading</h4>
-      <p>Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Cras mattis consectetur purus sit amet fermentum.</p>
+      <h4>text</h4>
+      <p>The textual content placed inside the modal body that informs user for an input.</p>
 
-      <h4>Subheading</h4>
-      <p>Maecenas sed diam eget risus varius blandit sit amet non magna.</p>
+      <h4>close</h4>
+      <p>the callback function to be called when a decision is made.</p>
     </div>
 
     <div class="col-lg-6">
-      <h4>Subheading</h4>
-      <p>Donec id elit non mi porta gravida at eget metus. Maecenas faucibus mollis interdum.</p>
+      <h4>confirmButton</h4>
+      <p>The text to be displayed on the confirm button.</p>
 
-      <h4>Subheading</h4>
-      <p>Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Cras mattis consectetur purus sit amet fermentum.</p>
+      <h4>cancelButton</h4>
+      <p>The text to be displayed on the cancel button.</p>
 
-      <h4>Subheading</h4>
-      <p>Maecenas sed diam eget risus varius blandit sit amet non magna.</p>
+      <h4>buttonClass</h4>
+      <p>The class name to be applied to both confirm and cancel button.</p>
     </div>
   </div>
 
   <div class="footer">
     <p>&copy; this is where I am going to leave my copyright and license preference.</p>
   </div>
-
 </div> <!-- /container -->
+
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.js"></script>
 <script src="rt_confirm.js"></script>
 <script type="text/javascript">
