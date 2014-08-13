@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Confirm Dialog unit test</title>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <link rel="stylesheet" href="//code.jquery.com/qunit/qunit-1.14.0.css">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+  <style type="text/css">
+    .rt-modal {
+      position: fixed;
+      width: 500px;
+      margin-left: -250px;
+      left: 50% ;
+      top: 100px;
+      z-index: 1050;
+      display: none;
+    }
+
+    .rt-modal .rt-modal-container {
+      background-color: #fff;
+      border: 1px solid #bbb;
+    }
+
+    .rt-modal .rt-modal-title {
+      font-size: 15px;
+      padding: 15px 1em;
+      border-bottom: 1px solid #bbb;
+    }
+
+    .rt-modal .rt-modal-title small {
+      font-size: 12px;
+      margin-left: 10px;
+    }
+
+    .rt-modal .rt-modal-text {
+      padding: 25px 20px;
+    }
+
+    .rt-modal .rt-modal-content {
+      
+    }
+
+    .rt-modal .rt-modal-button-container {
+      text-align: center;
+      padding-bottom: 1em;
+    }
+
+    .container {
+      max-width: 900px;
+    }
+  </style>
+  <script type="text/javascript">
+    var RT = {};
+  </script>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="jumbotron">
+    <h3>Unit test for rt_confirm.js</h3>
+    <button id="test_btn" class="btn btn-primary">Test me</button>
+  </div>
+
+  <div id="qunit">
+  
+  </div>
+
+</div>
+
+
+
+  <script src="//code.jquery.com/qunit/qunit-1.14.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.js"></script>
+  <script src="rt_confirm.js"></script>
+  <script type="text/javascript">
+  $('#test_btn').rtConfirm();
+  QUnit.test( 'Encoding test', function(assert) {
+
+  });
+  </script>
+</body>
+</html>

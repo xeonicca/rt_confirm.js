@@ -1,0 +1,48 @@
+/* demo page style */
+.rt-modal {
+  position: fixed;
+  width: 500px;
+  margin-left: -250px;
+  left: 50% ;
+  top: 100px;
+  z-index: 1050;
+  display: none;
+}
+
+.rt-modal .rt-modal-container {
+  background-color: #fff;
+  border: 1px solid #bbb;
+}
+
+.rt-modal .rt-modal-title {
+  font-size: 15px;
+  padding: 15px 1em;
+  border-bottom: 1px solid #bbb;
+}
+
+.rt-modal .rt-modal-title small {
+  font-size: 12px;
+  margin-left: 10px;
+}
+
+.rt-modal .rt-modal-text {
+  padding: 25px 20px;
+}
+
+.rt-modal .rt-modal-content {
+  
+}
+
+.rt-modal .rt-modal-button-container {
+  text-align: center;
+  padding-bottom: 1em;
+}
+
+.container {
+  max-width: 900px;
+}
+
+.demo-area {
+  padding: 10px 20px;
+  margin-bottom:10px;
+}

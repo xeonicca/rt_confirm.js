@@ -21,9 +21,12 @@
   defaults = {
     text: "Are you sure?",
     title: "",
+    alert: false,
     confirmButton: "Yes",
     cancelButton: "Cancel",
-    buttonClass: "rt-button"
+    buttonClass: "rt-button",
+    exitOnESC: false,
+    overlay: true
   };
 
   function Plugin( element, options ){
@@ -39,53 +42,74 @@
   };
 
   Plugin.prototype.init = function(){
-    var _self = this,
-    template =   '<div class=\"rt-modal\" uid=\"' + _self.uid + '\">';
+    var self = this,
+    template =   '<div class=\"rt-modal\" uid=\"' + self.uid + '\">';
     template +=  '  <div class=\"rt-modal-container\">';
-    if( _self.options.title !== '' ){
-      template +=  '    <span class=\"rt-modal-title\">' + _self.options.title + '<\/span>';
+    if( self.options.title !== '' ){
+      template +=  '    <p class=\"rt-modal-title\">' + self.options.title + '<\/p>';
     }
     template +=  '    <div class=\"rt-modal-content\">';
-    template +=  '      <p class=\"rt-modal-text\">' + _self.options.text + '<\/p>';
+    template +=  '      <p class=\"rt-modal-text\">' + self.options.text + '<\/p>';
     template +=  '      <div class=\"rt-modal-button-container\">';
-    template +=  '        <button data=\"confirm\" class=\"' + _self.options.buttonClass + '\">' + _self.options.confirmButton + '<\/button>';
-    template +=  '        <button data=\"cancel\"  class=\"' + _self.options.buttonClass + '\">' + _self.options.cancelButton + '<\/button>';
+    template +=  '        <button data=\"confirm\" class=\"' + self.options.buttonClass + '\">' + self.options.confirmButton + '<\/button>';
+    if( !self.options.alert ){
+      template +=  '        <button data=\"cancel\"  class=\"' + self.options.buttonClass + '\">' + self.options.cancelButton + '<\/button>';
+    }
     template +=  '      <\/div>';
     template +=  '    <\/div>';
     template +=  '  <\/div>';
     template +=  '<\/div>';
-    _self.$template = $( template );
-    _self.$el.bind( 'click', function(){
-      _self.toggleConfirm();
+
+    var $overlay = $('<div />');
+    $overlay.css({
+      'position':'fixed',
+      'top':0,
+      'left':0,
+      'background-color': 'rgba(75,75,75,0.6)',
+      'height' :'100%',
+      'width' : '100%'
+    });
+
+    self.$template = $( template ).remove('script');
+    if( self.options.overlay ){
+      self.$template = $overlay.append( self.$template );
+    }
+    self.$el.bind( 'click', function(){
+      self.toggle();
+    });
+
+    $('body').on( 'click', '.rt-modal[uid=' + self.uid + '] button[data]', function(){
+      if( $(this).attr('data') ==='confirm'){
+        self.accept = true;
+      }
+      if( $(this).attr('data') ==='cancel'){
+        self.accept = false;
+      }
+      self.toggle();
     });
   };
 
 
-  Plugin.prototype.toggleConfirm = function(){
-    var _self = this;
-    if( _self.display ){
-      _self.$template.on( 'click', 'button[data]', function(){
-        if( $(this).attr('data') ==='confirm'){
-          _self.accept = true;
+  Plugin.prototype.toggle = function(){
+    var self = this;
+    if( self.display ){
+      self.onOpen();
+      $(document).on( 'keyup', function( e ){
+        if( e.keyCode == 27 ){
+          self.$template.remove();
+          self.display = true;
         }
-        if( $(this).attr('data') ==='cancel'){
-          _self.accept = false;
-        }
-        _self.toggleConfirm();
       });
-      $('body').append( _self.$template.show() );
+      self.$template.find('.rt-modal').show().end().appendTo( 'body' );
+      if( self.options.overlay ){
+        self.$template = self.$template.wrap( self.$overlay );
+      }
     }else{
-      _self.$template.remove();
-      _self.onClose();
+      self.$template.remove();
+      self.onClose();
     }
-    _self.display = !_self.display;
+    self.display = !self.display;
   }
-
-  // Plugin.prototype.render = function(){
-  //   this.display? this.$template.trigger('rt-confirm-show') : this.$template.trigger( 'rt-confirm-hide' );
-  //   this.display = !this.display;
-  //   return this;
-  // };
 
   Plugin.prototype.onClose = function(){
     if( typeof this.options.close === 'function' ){
@@ -93,10 +117,16 @@
     }
   };
 
+  Plugin.prototype.onOpen = function(){
+    if( typeof this.options.open === 'function' ){
+      this.options.open.call( this.$el, this.accept );
+    }
+  }
+
   $.fn.rtConfirm = function( options ){
     return this.each( function(){
       if( typeof $(this).attr('uid') !== 'undefined' ){
-        $.data( document.body, $(this).attr('uid') );
+        var plugin = $.data( document.body, $(this).attr('uid') );
       }else{
         uid += 1;
         var newConfirm = new Plugin( this, options );
@@ -104,25 +134,5 @@
       }
     });
   };
-  
-  // var show = function() {
-  //    var _self = this;
 
-  //    if( _self.settings.overlay ){
-  //      var $overlay = $('<div />');
-  //      $overlay.css({
-  //        'position':'fixed',
-  //        'top':0,
-  //        'left':0,
-  //        'background-color': 'rgba(75,75,75,0.6)',
-  //        'height' :'100%',
-  //        'width' : '100%'
-  //      })
-  //      _self.$el.wrap( $overlay );
-  //    }
-
-  //    _self.$el.trigger('show-confirm');
-  //  };
-
-   
 })(jQuery, RT);
