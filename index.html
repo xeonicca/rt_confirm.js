@@ -55,12 +55,15 @@
 
       <h4>alert</h4>
       <p>Turn the confirm dialog to an alert popup.</p>
+
+      <h4>overlay</h4>
+      <p>When this is set to true, the plugin generates the dialog with background overlay behind it. (default value: <em>true</em>)</p>
     </div>
   </div>
 
   <h2>Usage</h2>
   <div class="row">
-    <div class="col-lg-12">
+    <div class="demo-container col-lg-12">
       <h4>Standard confirm dialog</h4>
       <div class="demo-area"><button id="demo1" class="btn btn-small btn-primary">Activate</button></div>
       <pre> $('#demo1').rtConfirm(); </pre>
@@ -68,18 +71,29 @@
 
       <h4>Standard alert dialog</h4>
       <div class="demo-area"><button id="demo2" class="btn btn-small btn-danger">Alert me</button></div>
-      <pre> $('#demo1').rtConfirm({alert:true}); </pre>
+      <pre> $('#demo2').rtConfirm({alert:true}); </pre>
       <script type="text/javascript">$('#demo2').rtConfirm({alert:true});</script>
 
       <h4>Standard confirm dialog with custom text</h4>
       <div class="demo-area"><button id="demo3" class="btn btn-small btn-default">Moron test</button></div>
-      <pre> $('#demo1').rtConfirm({
-      title:'moron test', 
-      text: 'Is your father a man?', 
-      confirmButton:'Yes', 
-      cancelButton: 'I am not sure?'}); </pre>
+      <pre> $('#demo3').rtConfirm({
+  title:'moron test', 
+  text: 'Is your father a man?', 
+  confirmButton:'Yes', 
+  cancelButton: 'I am not sure?'}); </pre>
       <script type="text/javascript">$('#demo3').rtConfirm({title:'moron test', text: 'is your father a man?', confirmButton:'Yes', cancelButton: 'I am not sure?'});</script>
-    </div>
+
+      <h4>Custom callback when leaving the dialog</h4>
+      <div class="demo-area"><button id="demo4" class="btn btn-small btn-info">Don't touch me</button></div>
+      <pre> $('#demo4').rtConfirm({ close: function( answer ){
+  if(answer) 
+    this.$el.text('I have been violated.');
+  }}); </pre>
+      <script type="text/javascript">$('#demo4').rtConfirm({ close: function(answer){
+    if(answer) this.$el.text('I have been violated.');
+  }});</script>
+  
+    </div> 
   </div>
 
   <div class="footer">
@@ -91,7 +105,7 @@
 <script type="text/javascript">
 $(function(){
   $('#demo_btn').rtConfirm({close: function( result ){
-    this.text("the return value is "+result);
+    this.$el.text("the return value is "+result);
   }, buttonClass: 'btn', exitOnESC: true, alert: true});
 });
 </script>

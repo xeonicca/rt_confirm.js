@@ -27,22 +27,24 @@
     buttonClass: "rt-button",
     exitOnESC: false,
     overlay: true
-  };
+  },
 
-  function Plugin( element, options ){
-    this.el = element;
-    this.$el = $(element);
-    this.options = $.extend( {}, defaults, options);
-    this._defaults = defaults;
-    this._name = pluginName;
-    this.uid = prefix + uid;
-    this.display = true;
-    this.init();
-    return this.$el;
-  };
+  init = function(){
+    createView.call( this );
+    bindEvent.call( this );
+    return this;
+  },
 
-  Plugin.prototype.init = function(){
+  createView = function(){
     var self = this,
+    $overlay = $('<div />').css({
+      'position':'fixed',
+      'top':0,
+      'left':0,
+      'background-color': 'rgba(75,75,75,0.6)',
+      'height' :'100%',
+      'width' : '100%'
+    }),
     template =   '<div class=\"rt-modal\" uid=\"' + self.uid + '\">';
     template +=  '  <div class=\"rt-modal-container\">';
     if( self.options.title !== '' ){
@@ -59,21 +61,18 @@
     template +=  '    <\/div>';
     template +=  '  <\/div>';
     template +=  '<\/div>';
-
-    var $overlay = $('<div />');
-    $overlay.css({
-      'position':'fixed',
-      'top':0,
-      'left':0,
-      'background-color': 'rgba(75,75,75,0.6)',
-      'height' :'100%',
-      'width' : '100%'
-    });
-
-    self.$template = $( template ).remove('script');
+    self.$template = $( template );
     if( self.options.overlay ){
       self.$template = $overlay.append( self.$template );
     }
+    self.$template.remove('script').hide();
+
+    
+    return self;
+  },
+
+  bindEvent = function(){
+    var self = this;
     self.$el.bind( 'click', function(){
       self.toggle();
     });
@@ -89,39 +88,49 @@
     });
   };
 
+  function Plugin( element, options ){
+    this.el = element;
+    this.$el = $(element);
+    this.options = $.extend( {}, defaults, options);
+    this._defaults = defaults;
+    this._name = pluginName;
+    this.uid = prefix + uid;
+    this.display = true;
+    return init.call( this );
+  };
+
+  Plugin.prototype.getModal= function(){
+    return this.$template;
+  };
 
   Plugin.prototype.toggle = function(){
     var self = this;
     if( self.display ){
-      self.onOpen();
       $(document).on( 'keyup', function( e ){
         if( e.keyCode == 27 ){
           self.$template.remove();
           self.display = true;
         }
       });
-      self.$template.find('.rt-modal').show().end().appendTo( 'body' );
-      if( self.options.overlay ){
-        self.$template = self.$template.wrap( self.$overlay );
-      }
+      domHandler.showPopup.call( this );
     }else{
-      self.$template.remove();
-      self.onClose();
+      domHandler.hidePopup.call( this );
     }
     self.display = !self.display;
-  }
-
-  Plugin.prototype.onClose = function(){
-    if( typeof this.options.close === 'function' ){
-      this.options.close.call( this.$el, this.accept );
-    }
   };
 
-  Plugin.prototype.onOpen = function(){
-    if( typeof this.options.open === 'function' ){
-      this.options.open.call( this.$el, this.accept );
+  var domHandler = {
+    showPopup: function(){
+      $('body').append( this.$template.show() );
+      if( typeof this.options.open === 'function' )
+        this.options.open.call( this );
+    },
+    hidePopup: function(){
+      if( typeof this.options.close === 'function' )
+        this.options.close.call( this );
+      this.$template.remove();
     }
-  }
+  };
 
   $.fn.rtConfirm = function( options ){
     return this.each( function(){
@@ -134,5 +143,7 @@
       }
     });
   };
+
+  namespace.rtConfirm = $.fn.rtConfirm;
 
 })(jQuery, RT);
